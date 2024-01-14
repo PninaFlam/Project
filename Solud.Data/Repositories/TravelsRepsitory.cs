@@ -1,4 +1,5 @@
-﻿using Solid.Core.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Solid.Core.Entities;
 using Solid.Core.Repositories;
 using System;
 using System.Collections.Generic;
@@ -18,12 +19,12 @@ namespace Solid.Data.Repositories
 
         public List<Travels> GetAll()
         {
-            return _context.Travels.ToList();
+            return _context.Travels.Include(c => c.Orders).ToList();
         }
 
         public Travels GetById(int id)
         {
-            var travel = _context.Travels.ToList().Find(c => c.Id == id);
+            var travel = _context.Travels.Include(c => c.Orders).ToList().Find(c => c.Id == id);
             return travel;
         }
         public Travels Add(Travels value)

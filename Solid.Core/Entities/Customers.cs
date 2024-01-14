@@ -9,5 +9,8 @@
         public string Phone { get; set; }
 
         public string Password { get; set; }
+
+        public List<Orders> Orders { get; set; }
+
     }
 }

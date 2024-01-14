@@ -8,5 +8,7 @@
 
         public DateTime Date { get; set; }
 
+        public List<Orders> Orders { get; set; }
+
     }
 }

@@ -4,14 +4,15 @@
     {
         public int Id { get; set; }
 
-        //public DateOnly Date { get; set; }
-
-        //public TimeOnly Time { get; set; }
-
         public int NumOfPlaces { get; set; }
 
-        public int TravelId { get; set; }
+        public int TravelsId { get; set; }
 
-        public Travels Travel { get; set; }
+        public Travels Travels { get; set; }
+
+        public int CustomersId { get; set; }
+
+        public Customers Customer { get; set; }
+
     }
 }

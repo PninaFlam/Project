@@ -1,4 +1,5 @@
-﻿using Solid.Core.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Solid.Core.Entities;
 using Solid.Core.Repositories;
 using System;
 using System.Collections.Generic;
@@ -8,23 +9,23 @@ using System.Threading.Tasks;
 
 namespace Solid.Data.Repositories
 {
-    public class CustomersRepository:ICustomersRepository
+    public class CustomersRepository : ICustomersRepository
     {
         private readonly DataContext _context;
 
         public CustomersRepository(DataContext context)
         {
-            _context = context; 
+            _context = context;
         }
 
         public List<Customers> GetAll()
         {
-            return _context.Customers.ToList();
+            return _context.Customers.Include(c => c.Orders).ToList();
         }
 
         public Customers GetById(int id)
         {
-            var cust = _context.Customers.ToList().Find(c => c.Id == id);
+            var cust = _context.Customers.Include(c => c.Orders).ToList().Find(c => c.Id == id);
             return cust;
         }
         public Customers Add(Customers value)
@@ -46,6 +47,7 @@ namespace Solid.Data.Repositories
             custToUpdate.Name = value.Name;
             custToUpdate.Phone = value.Phone;
             custToUpdate.Password = value.Password;
+            custToUpdate.Orders = value.Orders;
 
             _context.SaveChanges();
 

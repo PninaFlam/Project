@@ -55,15 +55,20 @@ namespace Solid.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int>("CustomersId")
+                        .HasColumnType("int");
+
                     b.Property<int>("NumOfPlaces")
                         .HasColumnType("int");
 
-                    b.Property<int>("TravelId")
+                    b.Property<int>("TravelsId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TravelId");
+                    b.HasIndex("CustomersId");
+
+                    b.HasIndex("TravelsId");
 
                     b.ToTable("Orders");
                 });
@@ -90,13 +95,31 @@ namespace Solid.Data.Migrations
 
             modelBuilder.Entity("Solid.Core.Entities.Orders", b =>
                 {
-                    b.HasOne("Solid.Core.Entities.Travels", "Travel")
-                        .WithMany()
-                        .HasForeignKey("TravelId")
+                    b.HasOne("Solid.Core.Entities.Customers", "Customer")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Travel");
+                    b.HasOne("Solid.Core.Entities.Travels", "Travels")
+                        .WithMany("Orders")
+                        .HasForeignKey("TravelsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Travels");
+                });
+
+            modelBuilder.Entity("Solid.Core.Entities.Customers", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("Solid.Core.Entities.Travels", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

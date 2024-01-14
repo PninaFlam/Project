@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Solid.Data.Migrations
 {
-    public partial class CreateMigration : Migration
+    public partial class create : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,32 +45,44 @@ namespace Solid.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NumOfPlaces = table.Column<int>(type: "int", nullable: false),
-                    TravelId = table.Column<int>(type: "int", nullable: false)
+                    TravelsId = table.Column<int>(type: "int", nullable: false),
+                    CustomersId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_Travels_TravelId",
-                        column: x => x.TravelId,
+                        name: "FK_Orders_Customers_CustomersId",
+                        column: x => x.CustomersId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Orders_Travels_TravelsId",
+                        column: x => x.TravelsId,
                         principalTable: "Travels",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_TravelId",
+                name: "IX_Orders_CustomersId",
                 table: "Orders",
-                column: "TravelId");
+                column: "CustomersId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_TravelsId",
+                table: "Orders",
+                column: "TravelsId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Customers");
+                name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Travels");

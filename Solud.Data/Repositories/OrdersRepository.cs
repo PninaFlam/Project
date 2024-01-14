@@ -1,4 +1,5 @@
-﻿using Solid.Core.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Solid.Core.Entities;
 using Solid.Core.Repositories;
 using System;
 using System.Collections.Generic;
@@ -18,12 +19,12 @@ namespace Solid.Data.Repositories
 
         public List<Orders> GetAll()
         {
-            return _context.Orders.ToList();
+            return _context.Orders.Include(c=>c.Customer).ToList();
         }
 
         public Orders GetById(int id)
         {
-            var order = _context.Orders.ToList().Find(c => c.Id == id);
+            var order = _context.Orders.Include(c => c.Travels).Include(c => c.Customer).ToList().Find(c => c.Id == id);
             return order;
         }
         public Orders Add(Orders value)
@@ -43,8 +44,8 @@ namespace Solid.Data.Repositories
                 return null;
 
             orderToUpdate.NumOfPlaces = value.NumOfPlaces;
-            orderToUpdate.TravelId = value.TravelId;
-            orderToUpdate.Travel = value.Travel;
+            orderToUpdate.Travels = value.Travels;
+            //orderToUpdate.Customer = value.Customer;
 
             _context.SaveChanges();
 
