@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Solid.Core;
+using Solid.Core.DTOs;
 using Solid.Core.Entities;
 using Solid.Core.Services;
 using Solid.Service;
@@ -9,13 +13,16 @@ namespace SolidApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TravelsController : ControllerBase
     {
         private readonly ITravelsService _travelsService;
+        private readonly IMapper _mapper;
 
-        public TravelsController(ITravelsService travelsService)
+        public TravelsController(ITravelsService travelsService, IMapper mapper)
         {
             _travelsService = travelsService;
+            _mapper = mapper;
         }
 
         // GET: api/<CarsController>
@@ -35,7 +42,9 @@ namespace SolidApi.Controllers
             if(travel == null)
                 return NotFound();
 
-            return Ok(travel);
+            var travelDto=_mapper.Map<TravelsDto>(travel);
+
+            return Ok(travelDto);
         }
 
 
@@ -43,7 +52,10 @@ namespace SolidApi.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Travels value)
         {
-            return Ok(_travelsService.Add(value));
+            var travel = _travelsService.Add(value);
+            var travelDto = _mapper.Map<TravelsDto>(travel);
+
+            return Ok(travelDto);
         }
 
 
@@ -56,7 +68,9 @@ namespace SolidApi.Controllers
             if (travel == null)
                 return NotFound();
 
-           return Ok(travel);
+            var travelDto = _mapper.Map<TravelsDto>(travel);
+
+            return Ok(travelDto);
         }
 
 
@@ -69,7 +83,9 @@ namespace SolidApi.Controllers
             if (travel == null)
                 return NotFound();
 
-            return Ok(travel);
+            var travelDto = _mapper.Map<TravelsDto>(travel);
+
+            return Ok(travelDto);
 
         }
     }

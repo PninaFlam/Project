@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Solid.Api.Models;
+using Solid.Core;
+using Solid.Core.DTOs;
 using Solid.Core.Entities;
 using Solid.Core.Services;
 using Solid.Service;
@@ -9,20 +14,23 @@ namespace SolidApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CustomersController : ControllerBase
     {
         private readonly ICustomersService _customersService;
+        private readonly IMapper _mapper;
 
-        public CustomersController(ICustomersService customersService)
+        public CustomersController(ICustomersService customersService,IMapper mapper)
         {
             _customersService = customersService;
+            _mapper = mapper;
         }
 
         // GET: api/<CustomersController>
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(_customersService.GetAll());
+            return Ok();
         }
 
         // GET api/<CustomersController>/5
@@ -34,26 +42,35 @@ namespace SolidApi.Controllers
             if(cust == null)
                 return NotFound();
 
-            return Ok(cust);
+            var custDto=_mapper.Map<CustomerDto>(cust);
+
+            return Ok(custDto);
         }
 
         // POST api/<CustomersController>
         [HttpPost]
-        public IActionResult Post([FromBody] Customers value)
+        public IActionResult Post([FromBody] CustomerModel value)
         {
-            return Ok( _customersService.Add(value));
+            var custModel =new Customers { Name = value.Name ,Password=value.Password,Phone=value.Phone};
+            var cust = _customersService.Add(custModel);
+            var custDto = _mapper.Map<CustomerDto>(cust);
+
+            return Ok(custDto);
         }
 
         // PUT api/<CustomersController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Customers value)
+        public IActionResult Put(int id, [FromBody] CustomerModel value)
         {
-            var cust = _customersService.Update(id, value);
+            var custModel = new Customers { Name = value.Name, Password = value.Password, Phone = value.Phone };
+            var cust = _customersService.Update(id, custModel);
 
             if (cust == null)
                 return NotFound();
 
-           return Ok(cust);
+            var custDto = _mapper.Map<CustomerDto>(cust);
+
+            return Ok(custDto);
         }
 
         // DELETE api/<CustomersController>/5
@@ -65,7 +82,9 @@ namespace SolidApi.Controllers
             if (cust == null)
                 return NotFound();
 
-            return Ok(cust);
+            var custDto = _mapper.Map<CustomerDto>(cust);
+
+            return Ok(custDto);
         }
     }
 }

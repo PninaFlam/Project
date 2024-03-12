@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Solid.Api.Models;
+using Solid.Core;
+using Solid.Core.DTOs;
 using Solid.Core.Entities;
 using Solid.Core.Services;
 using Solid.Service;
@@ -9,13 +14,17 @@ namespace SolidApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly IOrdersService _ordersService;
+        private readonly IMapper _mapper;
 
-        public OrdersController(IOrdersService ordersService)
+
+        public OrdersController(IOrdersService ordersService,IMapper mapper)
         {
             _ordersService = ordersService;
+            _mapper = mapper;
         }
 
 
@@ -36,15 +45,22 @@ namespace SolidApi.Controllers
             if (order == null)
                 return NotFound();
 
-           return Ok(order);
+            var orderDto=_mapper.Map<OrdersDto>(order);
+
+           return Ok(orderDto);
         }
 
 
         // POST api/<ParkingsController>
         [HttpPost]
-        public IActionResult Post([FromBody] Orders value)
+        public IActionResult Post([FromBody] OrdersModel value)
         {
-            return Ok(_ordersService.Add(value));
+            var orderModel = new Orders { NumOfPlaces = value.NumOfPlaces, CustomersId = value.CustomersId, TravelsId = value.TravelsId };
+            var order = _ordersService.Add(orderModel);
+
+            var orderDto = _mapper.Map<OrdersDto>(order);
+
+            return Ok(orderDto);
         }
 
 
@@ -57,7 +73,9 @@ namespace SolidApi.Controllers
             if (order == null)
                 return NotFound();
 
-           return Ok(order);
+            var orderDto = _mapper.Map<OrdersDto>(order);
+
+            return Ok(orderDto);
         }
 
 
@@ -70,7 +88,9 @@ namespace SolidApi.Controllers
             if (order == null)
                 return NotFound();
 
-            return Ok(order);
+            var orderDto = _mapper.Map<OrdersDto>(order);
+
+            return Ok(orderDto);
         }
     }
 }
